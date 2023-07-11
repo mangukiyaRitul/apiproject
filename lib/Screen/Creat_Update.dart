@@ -91,9 +91,9 @@ class _CreatUpdateState extends State<CreatUpdate> {
         "name": "${namecontroller.text.trim()}",
         "mobile_number": "${phonecontroller.text.trim()}",
         "email": "${emailcontroller.text.trim()}",
-        "image": urlcontroller.text != null ? "${urlcontroller.text.trim()}":"",
-        "age": agecontroller.text != null ? "${agecontroller.text.trim()}":"",
-        "address": addresscontroller.text != null? "${addresscontroller.text.trim()}":"",
+        "image":  "${urlcontroller.text.trim()}",
+        "age":  "${agecontroller.text.trim()}",
+        "address":  "${addresscontroller.text.trim()}",
       };
       context.read<Postapi>().postapi(json: json);
       Fluttertoast.showToast(msg: "sucsses");
@@ -171,11 +171,11 @@ class _CreatUpdateState extends State<CreatUpdate> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
 
-                                    Userdetiles( color: AppPrimary ,title: name.isEmpty ? "Name": '$name', SvgPath: 'assets/icons/envelope.svg',),
+                                    Userdetiles( color: AppPrimary ,title: name.isEmpty ? "Name": '$name', SvgPath: 'assets/icons/user.svg',),
 
                                     // Userdetiles(color: AppPrimary,title: '$name', SvgPath: 'assets/icons/user.svg',),
                                     SizedBox(height: 5,),
-                                    Userdetiles( color: AppPrimary ,title: phone.isEmpty ? "Phone": '$phone', SvgPath: 'assets/icons/envelope.svg',),
+                                    Userdetiles( color: AppPrimary ,title: phone.isEmpty ? "Phone": '$phone', SvgPath: 'assets/icons/phone.svg',),
 
                                     // Userdetiles(color: AppPrimary,title: '$phone', SvgPath: 'assets/icons/phone.svg',),
                                     SizedBox(height: 5,),

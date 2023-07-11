@@ -9,7 +9,7 @@ class Postapi extends ChangeNotifier {
   Future<bool> postapi(  {required Map<String,dynamic> json}) async {
 
     final Dio dio =Dio();
-    final uri = 'https://sahil-flutter.vercel.app/api/v1/users/';
+    final uri = 'https://sahil-flutter.vercel.app/api/v1/users';
 
     try{
       log("data ${json}");

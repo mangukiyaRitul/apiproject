@@ -147,7 +147,7 @@ class _HomePageState extends State<HomePage> {
                                 Container(
                                   height: 120,
                                   width: 100,
-                                  child: user.image != null?  Image.network("${user.image}",fit: BoxFit.fill,): Image.asset("assets/images/avatar-default-symbolic-icon-512x488-rddkk3u9.png"),
+                                  child: user.image == null || user.image == "" ? Image.asset("assets/images/avatar-default-symbolic-icon-512x488-rddkk3u9.png") :Image.network("${user.image}",fit: BoxFit.fill,),
                                 ),
                                 SizedBox(width: 15,),
                                Column(

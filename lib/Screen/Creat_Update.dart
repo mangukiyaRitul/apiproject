@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:apiproject/Color_Fonts_Error/Color-const.dart';
 import 'package:apiproject/Function/Validation.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
@@ -12,6 +13,7 @@ import '../Color_Fonts_Error/Fonts.dart';
 import '../Componet/My_Textformfill.dart';
 import '../Componet/My_inputTextFild.dart';
 import '../Componet/UserIfo.dart';
+import '../Statemanegement/DeleteApi.dart';
 import '../Statemanegement/PostApi.dart';
 
 class CreatUpdate extends StatefulWidget {
@@ -83,7 +85,6 @@ class _CreatUpdateState extends State<CreatUpdate> {
          }
      }
 
-
     if (_key.currentState != null && _key.currentState!.validate() && validimage) {
       //Todo:ApiColling
 
@@ -91,9 +92,10 @@ class _CreatUpdateState extends State<CreatUpdate> {
         "name": "${namecontroller.text.trim()}",
         "mobile_number": "${phonecontroller.text.trim()}",
         "email": "${emailcontroller.text.trim()}",
-        "image":  "${urlcontroller.text.trim()}",
-        "age":  "${agecontroller.text.trim()}",
-        "address":  "${addresscontroller.text.trim()}",
+        "age":   int.parse(agecontroller.text.trim()),
+        if(urlcontroller.text.trim() != '')  "image":   "${urlcontroller.text.trim()}",
+      if(agecontroller.text.trim() != '')  "age":   int.parse(agecontroller.text.trim()),
+        if(addresscontroller.text.trim() != '')  "address": '${addresscontroller.text.trim()}',
       };
       context.read<Postapi>().postapi(json: json);
       Fluttertoast.showToast(msg: "sucsses");
@@ -101,6 +103,7 @@ class _CreatUpdateState extends State<CreatUpdate> {
   }
 
   Widget build(BuildContext context) {
+   final postprovaider = context.read<DeleteApi>();
     return Scaffold(
       appBar: AppBar(
         title: Text("Creat"),
@@ -110,7 +113,7 @@ class _CreatUpdateState extends State<CreatUpdate> {
           backgroundColor: AppPrimary,
         ),
         onPressed: onSave,
-        child: Text("Save",
+        child: postprovaider.isloding == true ? CupertinoActivityIndicator() : Text("Save",
             style: MyTextStyle.medium.copyWith(
               color: Colors.white,
               fontSize: 15,

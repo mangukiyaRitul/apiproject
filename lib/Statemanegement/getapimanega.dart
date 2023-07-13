@@ -10,7 +10,7 @@ import '../API/Responsclass.dart';
 class getapimanege extends ChangeNotifier{
 
 bool isloding = false;
-
+List<getapimodel>? users;
   Future<Responsivclass<List<getapimodel>>?> getapi() async {
 
      final uri  =  'https://sahil-flutter.vercel.app/api/v1/users/';
@@ -32,6 +32,14 @@ bool isloding = false;
            responsivclass.smsg= response.data['msg'];
            responsivclass.data =List<getapimodel>.from(response.data['data'].map((e){ return getapimodel.fromJson(e); }));
            isloding = false;
+           users = responsivclass.data;
+           notifyListeners();
+           return responsivclass;
+         }
+       else
+         {
+           users = [];
+           isloding = false;
            notifyListeners();
            return responsivclass;
          }
@@ -39,12 +47,14 @@ bool isloding = false;
      } on DioException catch (e){
        isloding = false;
        notifyListeners();
+       users = [];
        log("DioError ${e}");
        return responsivclass;
      }
 
      catch(e){
        isloding = false;
+       users = [];
        notifyListeners();
        log("Error ${e}");
        return responsivclass;

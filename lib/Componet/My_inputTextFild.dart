@@ -58,6 +58,7 @@ class My_TextFormField2 extends StatelessWidget {
               ),
 
             TextFormField(
+
               onChanged: onChanged,
               maxLines: maxLine,
               onTap: onTap,
@@ -72,6 +73,7 @@ class My_TextFormField2 extends StatelessWidget {
               onFieldSubmitted: onFieldSubmitted,
               textInputAction:textInputAction ,
               decoration: InputDecoration(
+                counterText: "",
                   hintText: "$hinttext",
                   isDense: true,
                   border: OutlineInputBorder(

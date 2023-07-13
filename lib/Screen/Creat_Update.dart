@@ -1,7 +1,10 @@
 import 'dart:developer';
 
+import 'package:apiproject/API/GetAPI/GetAPImodel.dart';
 import 'package:apiproject/Color_Fonts_Error/Color-const.dart';
 import 'package:apiproject/Function/Validation.dart';
+import 'package:apiproject/Statemanegement/getapimanega.dart';
+import 'package:apiproject/Statemanegement/putapi.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -17,19 +20,20 @@ import '../Statemanegement/DeleteApi.dart';
 import '../Statemanegement/PostApi.dart';
 
 class CreatUpdate extends StatefulWidget {
-  const CreatUpdate({super.key});
+  getapimodel? json;
+   CreatUpdate({super.key ,this.json});
 
   @override
   State<CreatUpdate> createState() => _CreatUpdateState();
 }
 
 class _CreatUpdateState extends State<CreatUpdate> {
-  final namecontroller = TextEditingController();
-  final phonecontroller = TextEditingController();
-  final emailcontroller = TextEditingController();
-  final agecontroller = TextEditingController();
-  final addresscontroller = TextEditingController();
-  final urlcontroller = TextEditingController();
+  TextEditingController namecontroller = TextEditingController();
+  TextEditingController phonecontroller = TextEditingController();
+  TextEditingController emailcontroller = TextEditingController();
+  TextEditingController agecontroller = TextEditingController();
+  TextEditingController addresscontroller = TextEditingController();
+  TextEditingController urlcontroller = TextEditingController();
 
   final phoneFocus = FocusNode();
   final emailFocus = FocusNode();
@@ -65,7 +69,6 @@ class _CreatUpdateState extends State<CreatUpdate> {
     super.dispose();
   }
 
-  @override
   void nextFocus(FocusNode node) => node.requestFocus();
 
 
@@ -84,7 +87,6 @@ class _CreatUpdateState extends State<CreatUpdate> {
          imagecheck = false;
          }
      }
-
     if (_key.currentState != null && _key.currentState!.validate() && validimage) {
       //Todo:ApiColling
 
@@ -92,18 +94,56 @@ class _CreatUpdateState extends State<CreatUpdate> {
         "name": "${namecontroller.text.trim()}",
         "mobile_number": "${phonecontroller.text.trim()}",
         "email": "${emailcontroller.text.trim()}",
-        "age":   int.parse(agecontroller.text.trim()),
         if(urlcontroller.text.trim() != '')  "image":   "${urlcontroller.text.trim()}",
-      if(agecontroller.text.trim() != '')  "age":   int.parse(agecontroller.text.trim()),
+        if(agecontroller.text.trim().isNotEmpty)  "age":   int.parse(agecontroller.text.trim()),
         if(addresscontroller.text.trim() != '')  "address": '${addresscontroller.text.trim()}',
       };
-      context.read<Postapi>().postapi(json: json);
+
+      if(widget.json != null)
+        {
+          context.read<Putapi>().putapi(id: widget.json!.id!, json: json).then((value) async {
+            await context.read<getapimanege>().getapi();
+            Navigator.pop(context);
+          });
+
+
+        }
+      else{
+        context.read<Postapi>().postapi(json: json).then((value) async {
+          if(value.sucsse )
+          {
+            // await Future.delayed(Duration(seconds: 10));
+            await context.read<getapimanege>().getapi();
+            Navigator.pop(context);
+          }
+        });
+
+      }
       Fluttertoast.showToast(msg: "sucsses");
     }
   }
 
+  @override
+  void initState() {
+    if(widget.json != null)
+      {
+
+        namecontroller = TextEditingController( text:widget.json!.name);
+        namecontroller.text =widget.json!.name;
+        phonecontroller.text =widget.json!.mobile;
+        emailcontroller.text =widget.json!.email;
+        if(widget.json!.age != null && widget.json!.age != '' ) agecontroller.text=widget.json!.age.toString();
+        if(widget.json!.image != null && widget.json!.image != '' ){ imagecheck = true; urlcontroller.text=widget.json!.image!;}
+        if(widget.json!.address != null && widget.json!.address != '' )  addresscontroller.text=widget.json!.address!;
+
+      }
+    super.initState();
+  }
+
+
+  @override
   Widget build(BuildContext context) {
-   final postprovaider = context.read<DeleteApi>();
+   final postprovaider = context.watch<Postapi>();
     return Scaffold(
       appBar: AppBar(
         title: Text("Creat"),
@@ -113,7 +153,7 @@ class _CreatUpdateState extends State<CreatUpdate> {
           backgroundColor: AppPrimary,
         ),
         onPressed: onSave,
-        child: postprovaider.isloding == true ? CupertinoActivityIndicator() : Text("Save",
+        child:  postprovaider.ispostloding? CupertinoActivityIndicator(color: Colors.white,) : Text("Save",
             style: MyTextStyle.medium.copyWith(
               color: Colors.white,
               fontSize: 15,
@@ -173,46 +213,93 @@ class _CreatUpdateState extends State<CreatUpdate> {
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
+                                    if(widget.json!=null)
+                                      ...{
+                                        Userdetiles( color: AppPrimary , title: widget.json!.name.isNotEmpty? "${namecontroller.text.trim()}" : name.isEmpty ? "Name": '$name', SvgPath: 'assets/icons/user.svg',),
 
-                                    Userdetiles( color: AppPrimary ,title: name.isEmpty ? "Name": '$name', SvgPath: 'assets/icons/user.svg',),
+                                        // Userdetiles(color: AppPrimary,title: '$name', SvgPath: 'assets/icons/user.svg',),
+                                        SizedBox(height: 5,),
+                                        Userdetiles( color: AppPrimary ,title: widget.json!.mobile.isNotEmpty ?"${phonecontroller.text.trim()}":  phone.isEmpty ? "Phone": '$phone', SvgPath: 'assets/icons/phone.svg',),
 
-                                    // Userdetiles(color: AppPrimary,title: '$name', SvgPath: 'assets/icons/user.svg',),
-                                    SizedBox(height: 5,),
-                                    Userdetiles( color: AppPrimary ,title: phone.isEmpty ? "Phone": '$phone', SvgPath: 'assets/icons/phone.svg',),
+                                        // Userdetiles(color: AppPrimary,title: '$phone', SvgPath: 'assets/icons/phone.svg',),
+                                        SizedBox(height: 5,),
+                                        Userdetiles( color: AppPrimary ,title: widget.json!.email.isNotEmpty ? '${emailcontroller.text.trim()}': email.isEmpty ? "Email": '$email', SvgPath: 'assets/icons/envelope.svg',),
+                                        SizedBox(height: 5,),
+                                        Userdetiles(color: AppPrimary,title: widget.json!.age != null && widget.json!.age !='' ? '${agecontroller.text.trim()}' :age.isEmpty ? "Age": '$age', SvgPath: 'assets/icons/calendar.svg',),
 
-                                    // Userdetiles(color: AppPrimary,title: '$phone', SvgPath: 'assets/icons/phone.svg',),
-                                    SizedBox(height: 5,),
-                                    Userdetiles( color: AppPrimary ,title: email.isEmpty ? "Email": '$email', SvgPath: 'assets/icons/envelope.svg',),
-                                    //SizedBox(height: 5,),
-                                    Userdetiles(color: AppPrimary,title:age.isEmpty ? "Email": '$age', SvgPath: 'assets/icons/calendar.svg',),
+                                      }
+                                    else...{
+                                      Userdetiles( color: AppPrimary , title: name.isEmpty ? "Name": '$name', SvgPath: 'assets/icons/user.svg',),
+
+                                      // Userdetiles(color: AppPrimary,title: '$name', SvgPath: 'assets/icons/user.svg',),
+                                      SizedBox(height: 5,),
+                                      Userdetiles( color: AppPrimary ,title:  phone.isEmpty ? "Phone": '$phone', SvgPath: 'assets/icons/phone.svg',),
+
+                                      // Userdetiles(color: AppPrimary,title: '$phone', SvgPath: 'assets/icons/phone.svg',),
+                                      SizedBox(height: 5,),
+                                      Userdetiles( color: AppPrimary ,title:  email.isEmpty ? "Email": '$email', SvgPath: 'assets/icons/envelope.svg',),
+                                      //SizedBox(height: 5,),
+                                      Userdetiles(color: AppPrimary,title: age.isEmpty ? "Age": '$age', SvgPath: 'assets/icons/calendar.svg',),
+
+                                    }
+
                                   ],)
                               ],
                             ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-                              // mainAxisSize:MainAxisSize.min
-                              children: [
-                                SvgPicture.asset("assets/icons/location-pin.svg",
-                                  width: 20,
-                                  height: 20,
-                                  color: AppPrimary,
-                                ),
-                                SizedBox(width: 10,),
-                                Expanded(
-                                  child: Text(
-                                    "$address",
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    softWrap: false,
-                                    style: MyTextStyle.medium.copyWith(
-                                      fontSize: 14.5,
-                                      color: Colors.black,
-                                    ),),
-                                ),
-                              ],
-                            )
+                            if(widget.json != null)...{
+                              SizedBox(
+                                height: 15,),
+                              Row(
+                                // mainAxisSize:MainAxisSize.min
+                                children: [
+                                  SvgPicture.asset("assets/icons/location-pin.svg",
+                                    width: 20,
+                                    height: 20,
+                                    color: AppPrimary,
+                                  ),
+                                  SizedBox(width: 10,),
+                                  Expanded(
+                                    child: Text(
+                                       widget.json!.address != null && address != ""?  "$address":'Address',
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      softWrap: false,
+                                      style: MyTextStyle.medium.copyWith(
+                                        fontSize: 14.5,
+                                        color: Colors.black,
+                                      ),),
+                                  ),
+                                ],
+                              )
+                            }else...{
+                              SizedBox(
+                                height: 15,
+
+                              ),
+                              Row(
+                                // mainAxisSize:MainAxisSize.min
+                                children: [
+                                  SvgPicture.asset("assets/icons/location-pin.svg",
+                                    width: 20,
+                                    height: 20,
+                                    color: AppPrimary,
+                                  ),
+                                  SizedBox(width: 10,),
+                                  Expanded(
+                                    child: Text(
+                                      address != ""?  "$address":'Address',
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      softWrap: false,
+                                      style: MyTextStyle.medium.copyWith(
+                                        fontSize: 14.5,
+                                        color: Colors.black,
+                                      ),),
+                                  ),
+                                ],
+                              )
+                            },
+
                           ],
                         ),
                       ),
@@ -285,6 +372,7 @@ class _CreatUpdateState extends State<CreatUpdate> {
                                   validator: mobileValidate,
                                   focusNode: phoneFocus,
                                   keyboardType: TextInputType.number,
+                                  maxlenght: 10,
                                   inputFormatters: [
                                     FilteringTextInputFormatter.allow(
                                         RegExp('[0-9]'))

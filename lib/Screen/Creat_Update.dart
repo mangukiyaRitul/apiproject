@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:apiproject/API/GetAPI/GetAPImodel.dart';
 import 'package:apiproject/Color_Fonts_Error/Color-const.dart';
 import 'package:apiproject/Function/Validation.dart';
@@ -13,10 +11,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 import '../Color_Fonts_Error/Fonts.dart';
-import '../Componet/My_Textformfill.dart';
 import '../Componet/My_inputTextFild.dart';
 import '../Componet/UserIfo.dart';
-import '../Statemanegement/DeleteApi.dart';
 import '../Statemanegement/PostApi.dart';
 
 class CreatUpdate extends StatefulWidget {
@@ -47,7 +43,9 @@ class _CreatUpdateState extends State<CreatUpdate> {
   String  age = '';
   String  address = '';
   String  url = '';
+
   bool  imagecheck = false;
+  bool  Update = false;
 
   final _key = GlobalKey<FormState>();
 
@@ -72,21 +70,38 @@ class _CreatUpdateState extends State<CreatUpdate> {
   void nextFocus(FocusNode node) => node.requestFocus();
 
 
+  @override
+  void initState() {
+    if(widget.json != null)
+      {
+        Update = true;
+        namecontroller = TextEditingController( text:widget.json!.name);
+        namecontroller.text =widget.json!.name;
+        phonecontroller.text =widget.json!.mobile;
+        emailcontroller.text =widget.json!.email;
+        if(widget.json!.age != null && widget.json!.age != '' ) agecontroller.text=widget.json!.age.toString();
+        if(widget.json!.image != null && widget.json!.image != '' ){ imagecheck = true; urlcontroller.text=widget.json!.image!;}
+        if(widget.json!.address != null && widget.json!.address != '' )  addresscontroller.text=widget.json!.address!;
+
+      }
+    super.initState();
+  }
+
   Future<void> onSave() async {
-       bool validimage = true;
-   if(urlcontroller.text.trim().isNotEmpty)
-     {
-       final image = await urlValidation(url: urlcontroller.text.trim());
-       validimage = image;
-       imagecheck = true;
-       setState(() {});
-       print(imagecheck);
-       if(image == false)
-         {
-         Fluttertoast.showToast(msg: "Invalid Image link");
-         imagecheck = false;
-         }
-     }
+    bool validimage = true;
+    if(urlcontroller.text.trim().isNotEmpty)
+    {
+      final image = await urlValidation(url: urlcontroller.text.trim());
+      validimage = image;
+      imagecheck = true;
+      setState(() {});
+      print(imagecheck);
+      if(image == false)
+      {
+        Fluttertoast.showToast(msg: "Invalid Image link");
+        imagecheck = false;
+      }
+    }
     if (_key.currentState != null && _key.currentState!.validate() && validimage) {
       //Todo:ApiColling
 
@@ -100,64 +115,55 @@ class _CreatUpdateState extends State<CreatUpdate> {
       };
 
       if(widget.json != null)
-        {
-          context.read<Putapi>().putapi(id: widget.json!.id!, json: json).then((value) async {
-            await context.read<getapimanege>().getapi();
-            Navigator.pop(context);
-          });
+      {
+        context.read<Putapi>().putapi(id: widget.json!.id!, json: json).then((value) async {
+          await context.read<getapimanege>().getapi();
+          Fluttertoast.showToast(msg: "successful update  ");
+          Navigator.pop(context);
+        });
 
 
-        }
+      }
       else{
         context.read<Postapi>().postapi(json: json).then((value) async {
           if(value.sucsse )
           {
             // await Future.delayed(Duration(seconds: 10));
             await context.read<getapimanege>().getapi();
+            Fluttertoast.showToast(msg: "success Creat");
             Navigator.pop(context);
+
           }
         });
 
       }
-      Fluttertoast.showToast(msg: "sucsses");
     }
   }
 
   @override
-  void initState() {
-    if(widget.json != null)
-      {
-
-        namecontroller = TextEditingController( text:widget.json!.name);
-        namecontroller.text =widget.json!.name;
-        phonecontroller.text =widget.json!.mobile;
-        emailcontroller.text =widget.json!.email;
-        if(widget.json!.age != null && widget.json!.age != '' ) agecontroller.text=widget.json!.age.toString();
-        if(widget.json!.image != null && widget.json!.image != '' ){ imagecheck = true; urlcontroller.text=widget.json!.image!;}
-        if(widget.json!.address != null && widget.json!.address != '' )  addresscontroller.text=widget.json!.address!;
-
-      }
-    super.initState();
-  }
-
-
-  @override
   Widget build(BuildContext context) {
    final postprovaider = context.watch<Postapi>();
+   final isloding = Update ? context.watch<Putapi>().isputloding : postprovaider.ispostloding;
     return Scaffold(
       appBar: AppBar(
-        title: Text("Creat"),
+        title: Text(Update ? "Update": "Creat"),
       ),
       floatingActionButton: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppPrimary,
         ),
         onPressed: onSave,
-        child:  postprovaider.ispostloding? CupertinoActivityIndicator(color: Colors.white,) : Text("Save",
-            style: MyTextStyle.medium.copyWith(
-              color: Colors.white,
-              fontSize: 15,
-            )),
+        child:  isloding? SizedBox(
+            width: 36,
+            child: CupertinoActivityIndicator(color: Colors.white,)) : SizedBox(
+          width: 36,
+          // height: 25,
+          child: Text("Save",
+              style: MyTextStyle.medium.copyWith(
+                color: Colors.white,
+                fontSize: 15,
+              )),
+        ),
       ),
       body: Form(
         key: _key,
@@ -210,40 +216,41 @@ class _CreatUpdateState extends State<CreatUpdate> {
                                 SizedBox(
                                   width: 15,
                                 ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    if(widget.json!=null)
-                                      ...{
-                                        Userdetiles( color: AppPrimary , title: widget.json!.name.isNotEmpty? "${namecontroller.text.trim()}" : name.isEmpty ? "Name": '$name', SvgPath: 'assets/icons/user.svg',),
+                                Flexible(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      if(widget.json!=null)
+                                        ...{
+                                           Userdetiles( color: AppPrimary , title: widget.json!.name.isNotEmpty? "${namecontroller.text.trim()}" : name.isEmpty ? "Name": '$name', SvgPath: 'assets/icons/user.svg',),
+
+                                          // Userdetiles(color: AppPrimary,title: '$name', SvgPath: 'assets/icons/user.svg',),
+                                          SizedBox(height: 5,),
+                                          Userdetiles( color: AppPrimary ,title: widget.json!.mobile.isNotEmpty ?"${phonecontroller.text.trim()}":  phone.isEmpty ? "Phone": '$phone', SvgPath: 'assets/icons/phone.svg',),
+                                          // Userdetiles(color: AppPrimary,title: '$phone', SvgPath: 'assets/icons/phone.svg',),
+                                          SizedBox(height: 5,),
+                                          Userdetiles( color: AppPrimary ,title: widget.json!.email.isNotEmpty ? '${emailcontroller.text.trim()}': email.isEmpty ? "Email": '$email', SvgPath: 'assets/icons/envelope.svg',),
+                                          SizedBox(height: 5,),
+                                          Userdetiles(color: AppPrimary,title: widget.json!.age != null && widget.json!.age !='' ? '${agecontroller.text.trim()}' :age.isEmpty ? "Age": '$age', SvgPath: 'assets/icons/calendar.svg',),
+
+                                        }
+                                      else...{
+                                        Userdetiles( color: AppPrimary , title: name.isEmpty ? "Name": '$name', SvgPath: 'assets/icons/user.svg',),
 
                                         // Userdetiles(color: AppPrimary,title: '$name', SvgPath: 'assets/icons/user.svg',),
                                         SizedBox(height: 5,),
-                                        Userdetiles( color: AppPrimary ,title: widget.json!.mobile.isNotEmpty ?"${phonecontroller.text.trim()}":  phone.isEmpty ? "Phone": '$phone', SvgPath: 'assets/icons/phone.svg',),
+                                        Userdetiles( color: AppPrimary ,title:  phone.isEmpty ? "Phone": '$phone', SvgPath: 'assets/icons/phone.svg',),
 
                                         // Userdetiles(color: AppPrimary,title: '$phone', SvgPath: 'assets/icons/phone.svg',),
                                         SizedBox(height: 5,),
-                                        Userdetiles( color: AppPrimary ,title: widget.json!.email.isNotEmpty ? '${emailcontroller.text.trim()}': email.isEmpty ? "Email": '$email', SvgPath: 'assets/icons/envelope.svg',),
-                                        SizedBox(height: 5,),
-                                        Userdetiles(color: AppPrimary,title: widget.json!.age != null && widget.json!.age !='' ? '${agecontroller.text.trim()}' :age.isEmpty ? "Age": '$age', SvgPath: 'assets/icons/calendar.svg',),
+                                        Userdetiles( color: AppPrimary ,title:  email.isEmpty ? "Email": '$email', SvgPath: 'assets/icons/envelope.svg',),
+                                        //SizedBox(height: 5,),
+                                        Userdetiles(color: AppPrimary,title: age.isEmpty ? "Age": '$age', SvgPath: 'assets/icons/calendar.svg',),
 
-                                      }
-                                    else...{
-                                      Userdetiles( color: AppPrimary , title: name.isEmpty ? "Name": '$name', SvgPath: 'assets/icons/user.svg',),
+                                      },
 
-                                      // Userdetiles(color: AppPrimary,title: '$name', SvgPath: 'assets/icons/user.svg',),
-                                      SizedBox(height: 5,),
-                                      Userdetiles( color: AppPrimary ,title:  phone.isEmpty ? "Phone": '$phone', SvgPath: 'assets/icons/phone.svg',),
-
-                                      // Userdetiles(color: AppPrimary,title: '$phone', SvgPath: 'assets/icons/phone.svg',),
-                                      SizedBox(height: 5,),
-                                      Userdetiles( color: AppPrimary ,title:  email.isEmpty ? "Email": '$email', SvgPath: 'assets/icons/envelope.svg',),
-                                      //SizedBox(height: 5,),
-                                      Userdetiles(color: AppPrimary,title: age.isEmpty ? "Age": '$age', SvgPath: 'assets/icons/calendar.svg',),
-
-                                    }
-
-                                  ],)
+                                    ],),
+                                )
                               ],
                             ),
                             if(widget.json != null)...{

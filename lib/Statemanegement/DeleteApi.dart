@@ -2,8 +2,6 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-
-import '../API/GetAPI/GetAPImodel.dart';
 import '../API/Responsclass.dart';
 
 class DeleteApi extends ChangeNotifier {

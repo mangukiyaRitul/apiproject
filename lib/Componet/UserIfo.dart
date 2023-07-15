@@ -29,15 +29,17 @@ class Userdetiles extends StatelessWidget {
           color: color,
         ),
         SizedBox(width: 10,),
-        Text(
-          title,
-          maxLines:2,
-          overflow: TextOverflow.ellipsis,
-          softWrap: false,
-          style: MyTextStyle.medium.copyWith(
-          fontSize: 14.5,
-          color: Colors.black,
-        ),),
+        Flexible(
+          child: Text(
+            title,
+            maxLines:2,
+            overflow: TextOverflow.ellipsis,
+            softWrap: false,
+            style: MyTextStyle.medium.copyWith(
+            fontSize: 14.5,
+            color: Colors.black,
+          ),),
+        ),
       ],
     );
   }

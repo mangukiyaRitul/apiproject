@@ -62,6 +62,7 @@ try{
   if(response.statusCode == 200)
   {
     final image = response.headers["content-type"]![0];
+    print("image ${image.runtimeType}");
     final res = Type.any((e) => e == image.toLowerCase());
     print("res $res");
     return res;

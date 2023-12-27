@@ -1,33 +1,34 @@
+
 class getapimodel {
 
-  final String name;
-  final String mobile;
-  final String email;
-  final String? image;
-  final int? age;
-  final int? id;
-  final String? address;
+  final String Name;
+  final String Phone;
+  final String Email;
+  final String? Url;
+  final int? Age;
+  final String? id;
+  final String? Address;
 
   getapimodel(
       {
-        required this.name,
-        required this.mobile,
-        required this.email,
-        this.image,
-        this.age,
-        this.address,
+        required this.Name,
+        required this.Phone,
+        required this.Email,
+        this.Url,
+        this.Age,
+        this.Address,
         this.id
       });
 
   factory getapimodel.fromJson(Map<String,dynamic> json) =>
       getapimodel(
-          name: json['name'],
-          mobile: json['mobile_number'],
-          email: json['email'],
-          image: json['image'],
-          age: json['age'],
-          address: json['address'],
-        id: json['id'],
+          Name: json['Name'],
+          Phone: json['Phone'],
+          Email: json['Email'],
+          Url: json['Url'],
+          Age: json['Age'],
+          Address: json['Address'],
+        id: json['_id'],
       );
 
 }

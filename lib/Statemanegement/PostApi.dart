@@ -14,21 +14,22 @@ class Postapi extends ChangeNotifier {
     final Dio dio =Dio();
     Responsivclass responsivclass = Responsivclass(sucsse: false, smsg: 'APi Colling');
 
-    final uri = 'https://sahil-flutter.vercel.app/api/v1/users';
+    final uri = 'https://userprofle.onrender.com/users/createProfile';
 
     try{
       ispostloding = true;
       notifyListeners();
-      log("data ${json}");
+      debugPrint("data ${json}");
        Response response = await dio.post(uri,data: json,);
-      log("response $response");
-      log("code${response.statusCode}");
+      debugPrint("response $response");
+      debugPrint("code${response.statusCode}");
       if(response.statusCode == 201)
       {
-        log("ok");
+        debugPrint("ok");
         ispostloding = false;
         responsivclass.sucsse = true;
-        notifyListeners();
+        debugPrint("API DATA REALURI : ${response.realUri}");
+        debugPrint("API DATA : ${response.requestOptions.uri}");
         notifyListeners();
         return responsivclass;
 
@@ -38,20 +39,20 @@ class Postapi extends ChangeNotifier {
         ispostloding = false;
         responsivclass.sucsse = false;
         notifyListeners();
-        log("else error");
+        debugPrint("else error");
         return responsivclass;
       }
 
     }
     on DioException catch(e){
-      log("Dio Error $e");
+      debugPrint("Dio Error $e");
       responsivclass.sucsse = false;
       ispostloding = false;
       notifyListeners();
       return responsivclass;
     }
     catch(e){
-      log("catch $e");
+      debugPrint("catch $e");
       responsivclass.sucsse = false;
       ispostloding = false;
       notifyListeners();

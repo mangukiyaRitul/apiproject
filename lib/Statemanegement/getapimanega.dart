@@ -1,4 +1,5 @@
 
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
@@ -11,9 +12,10 @@ class getapimanege extends ChangeNotifier{
 
 bool isloding = false;
 List<getapimodel>? users;
+List<getapimodel> fast3user = [];
   Future<Responsivclass<List<getapimodel>>?> getapi() async {
 
-     final uri  =  'https://sahil-flutter.vercel.app/api/v1/users/';
+     final uri  =  'https://userprofle.onrender.com/users/getProfile';
 
      final Dio dio = Dio();
 
@@ -22,15 +24,17 @@ List<getapimodel>? users;
      try{
        isloding = true;
        notifyListeners();
-       Response response = await dio.get(uri,options: Options(validateStatus: (status){
-         return status == 200 || status == 400 || status == 404||status == 500;},));
-       log("response  ${response.statusCode}");
+       Response response = await dio.get(uri, options: Options(validateStatus: (status){
+         return status == 200 || status == 400 || status == 404||status == 500;},  ));
+       debugPrint("response  ${response.statusCode}");
 
        if(response.statusCode == 200)
          {
            responsivclass.sucsse = true;
-           responsivclass.smsg= response.data['msg'];
-           responsivclass.data =List<getapimodel>.from(response.data['data'].map((e){ return getapimodel.fromJson(e); }));
+           responsivclass.smsg= response.data['message'];
+           debugPrint("API DATA REALURI : ${response.realUri}");
+           debugPrint("API DATA : ${response.requestOptions.uri}");
+           responsivclass.data = List<getapimodel>.from(response.data['data'].map((e)=> getapimodel.fromJson(e)));
            isloding = false;
            users = responsivclass.data;
            notifyListeners();
@@ -48,7 +52,7 @@ List<getapimodel>? users;
        isloding = false;
        notifyListeners();
        users = [];
-       log("DioError ${e}");
+       debugPrint("DioError ${e}");
        return responsivclass;
      }
 
@@ -56,7 +60,7 @@ List<getapimodel>? users;
        isloding = false;
        users = [];
        notifyListeners();
-       log("Error ${e}");
+       debugPrint("Error ${e}");
        return responsivclass;
      }
 

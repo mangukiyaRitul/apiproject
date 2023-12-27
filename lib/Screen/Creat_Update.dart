@@ -75,14 +75,13 @@ class _CreatUpdateState extends State<CreatUpdate> {
     if(widget.json != null)
       {
         Update = true;
-        namecontroller = TextEditingController( text:widget.json!.name);
-        namecontroller.text =widget.json!.name;
-        phonecontroller.text =widget.json!.mobile;
-        emailcontroller.text =widget.json!.email;
-        if(widget.json!.age != null && widget.json!.age != '' ) agecontroller.text=widget.json!.age.toString();
-        if(widget.json!.image != null && widget.json!.image != '' ){ imagecheck = true; urlcontroller.text=widget.json!.image!;}
-        if(widget.json!.address != null && widget.json!.address != '' )  addresscontroller.text=widget.json!.address!;
-
+        namecontroller = TextEditingController( text:widget.json!.Name);
+        namecontroller.text =widget.json!.Name;
+        phonecontroller.text =widget.json!.Phone;
+        emailcontroller.text =widget.json!.Email;
+        if(widget.json!.Age != null && widget.json!.Age != '' ) agecontroller.text=widget.json!.Age.toString();
+        if(widget.json!.Url != null && widget.json!.Url != '' ){ imagecheck = true; urlcontroller.text=widget.json!.Url!;}
+        if(widget.json!.Address != null && widget.json!.Address != '' )  addresscontroller.text=widget.json!.Address!;
       }
     super.initState();
   }
@@ -106,12 +105,12 @@ class _CreatUpdateState extends State<CreatUpdate> {
       //Todo:ApiColling
 
       Map<String,dynamic> json = {
-        "name": "${namecontroller.text.trim()}",
-        "mobile_number": "${phonecontroller.text.trim()}",
-        "email": "${emailcontroller.text.trim()}",
-        if(urlcontroller.text.trim() != '')  "image":   "${urlcontroller.text.trim()}",
-        if(agecontroller.text.trim().isNotEmpty)  "age":   int.parse(agecontroller.text.trim()),
-        if(addresscontroller.text.trim() != '')  "address": '${addresscontroller.text.trim()}',
+        "Name": "${namecontroller.text.trim()}",
+        "Phone": "${phonecontroller.text.trim()}",
+        "Email": "${emailcontroller.text.trim()}",
+        if(urlcontroller.text.trim() != '')  "Url":   "${urlcontroller.text.trim()}",
+        if(agecontroller.text.trim().isNotEmpty)  "Age":   int.parse(agecontroller.text.trim()),
+        if(addresscontroller.text.trim() != '')  "Address": '${addresscontroller.text.trim()}',
       };
 
       if(widget.json != null)
@@ -125,8 +124,8 @@ class _CreatUpdateState extends State<CreatUpdate> {
 
       }
       else{
-        context.read<Postapi>().postapi(json: json).then((value) async {
-          if(value.sucsse )
+         context.read<Postapi>().postapi(json: json).then((value) async {
+          if(value.sucsse)
           {
             // await Future.delayed(Duration(seconds: 10));
             await context.read<getapimanege>().getapi();
@@ -222,16 +221,14 @@ class _CreatUpdateState extends State<CreatUpdate> {
                                     children: [
                                       if(widget.json!=null)
                                         ...{
-                                           Userdetiles( color: AppPrimary , title: widget.json!.name.isNotEmpty? "${namecontroller.text.trim()}" : name.isEmpty ? "Name": '$name', SvgPath: 'assets/icons/user.svg',),
-
-                                          // Userdetiles(color: AppPrimary,title: '$name', SvgPath: 'assets/icons/user.svg',),
+                                           Userdetiles( color: AppPrimary , title: widget.json!.Name.isNotEmpty? "${namecontroller.text.trim()}" : name.isEmpty ? "Name": '$name', SvgPath: 'assets/icons/user.svg',),
                                           SizedBox(height: 5,),
-                                          Userdetiles( color: AppPrimary ,title: widget.json!.mobile.isNotEmpty ?"${phonecontroller.text.trim()}":  phone.isEmpty ? "Phone": '$phone', SvgPath: 'assets/icons/phone.svg',),
+                                          Userdetiles( color: AppPrimary ,title: widget.json!.Phone.isNotEmpty ?"${phonecontroller.text.trim()}":  phone.isEmpty ? "Phone": '$phone', SvgPath: 'assets/icons/phone.svg',),
                                           // Userdetiles(color: AppPrimary,title: '$phone', SvgPath: 'assets/icons/phone.svg',),
                                           SizedBox(height: 5,),
-                                          Userdetiles( color: AppPrimary ,title: widget.json!.email.isNotEmpty ? '${emailcontroller.text.trim()}': email.isEmpty ? "Email": '$email', SvgPath: 'assets/icons/envelope.svg',),
+                                          Userdetiles( color: AppPrimary ,title: widget.json!.Email.isNotEmpty ? '${emailcontroller.text.trim()}': email.isEmpty ? "Email": '$email', SvgPath: 'assets/icons/envelope.svg',),
                                           SizedBox(height: 5,),
-                                          Userdetiles(color: AppPrimary,title: widget.json!.age != null && widget.json!.age !='' ? '${agecontroller.text.trim()}' :age.isEmpty ? "Age": '$age', SvgPath: 'assets/icons/calendar.svg',),
+                                          Userdetiles(color: AppPrimary,title: widget.json!.Age != null && widget.json!.Age !='' ? '${agecontroller.text.trim()}' :age.isEmpty ? "Age": '$age', SvgPath: 'assets/icons/calendar.svg',),
 
                                         }
                                       else...{
@@ -267,7 +264,7 @@ class _CreatUpdateState extends State<CreatUpdate> {
                                   SizedBox(width: 10,),
                                   Expanded(
                                     child: Text(
-                                       widget.json!.address != null && address != ""?  "$address":'Address',
+                                       widget.json!.Address != null && address != ""?  "$address":'Address',
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
                                       softWrap: false,
@@ -485,9 +482,6 @@ class _CreatUpdateState extends State<CreatUpdate> {
                       ),
                     ),
                   ),
-                  //Read
-
-
                 ],
               ),
             ),

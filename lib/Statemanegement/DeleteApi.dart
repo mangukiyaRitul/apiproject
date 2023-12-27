@@ -7,12 +7,12 @@ import '../API/Responsclass.dart';
 class DeleteApi extends ChangeNotifier {
 
   bool isloding = false;
-  Future<Responsivclass> deleteapi(  {required int id}) async {
+  Future<Responsivclass> deleteapi(  {required String id}) async {
 
     Responsivclass responsivclass = Responsivclass(sucsse: false, smsg: 'APi Colling');
 
     final Dio dio =Dio();
-    final uri = 'https://sahil-flutter.vercel.app/api/v1/users/';
+    final uri = 'https://userprofle.onrender.com/users/deleteProfile/';
 
 
 
@@ -27,6 +27,8 @@ class DeleteApi extends ChangeNotifier {
           isloding =false;
           responsivclass.sucsse = true;
           notifyListeners();
+          debugPrint("API DATA REALURI : ${response.realUri}");
+          debugPrint("API DATA : ${response.requestOptions.uri}");
           return responsivclass;
 
         }

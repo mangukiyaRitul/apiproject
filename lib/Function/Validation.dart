@@ -2,6 +2,7 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 
 String? emailValidator(String? email) {
 
@@ -56,8 +57,8 @@ Future<bool> urlValidation({required String url}) async {
 try{
 
   Response response = await dio.head(url);
-  log("Type : ${response.headers["content-type"]?[0]}");
-  log("statuscode  ${response.statusCode}");
+  debugPrint("Type : ${response.headers["content-type"]?[0]}");
+  debugPrint("statuscode  ${response.statusCode}");
 
   if(response.statusCode == 200)
   {
@@ -72,11 +73,11 @@ try{
     return false;
   }
 } on DioException catch(e){
-  log("DioCatch : $e");
+  debugPrint("DioCatch : $e");
   return false;
 }
   catch(e){
-    log("Catch : $e");
+    debugPrint("Catch : $e");
     return false;
   }
 }

@@ -9,8 +9,8 @@ import '../API/Responsclass.dart';
 class Putapi extends ChangeNotifier{
 bool isputloding = false;
 
-  Future<Responsivclass> putapi({required int id,required Map<String,dynamic> json}) async {
-    final uri  =  'https://sahil-flutter.vercel.app/api/v1/users/';
+  Future<Responsivclass> putapi({required String id,required Map<String,dynamic> json}) async {
+    final uri  =  'https://userprofle.onrender.com/users/updateProfile/';
    final dio = Dio();
 
    Responsivclass responseclass = Responsivclass(
@@ -21,7 +21,7 @@ bool isputloding = false;
      isputloding = true;
      notifyListeners();
      Response response = await dio.put(uri+'$id',data: json);
-     log("putpi: code ${response.statusCode}");
+     debugPrint("putpi: code ${response.statusCode}");
 
      if(response.statusCode == 200)
        {
@@ -29,6 +29,9 @@ bool isputloding = false;
          responseclass.sucsse = true;
          isputloding = false;
          notifyListeners();
+         debugPrint("API DATA REALURI : ${response.realUri}");
+         debugPrint("API DATA : ${response.requestOptions.uri}");
+
          return responseclass;
        }
      else{
@@ -38,12 +41,12 @@ bool isputloding = false;
      }
      return responseclass;
    }on DioException catch(e){
-     log("putapi: Dio catch Error $e");
+     debugPrint("putapi: Dio catch Error $e");
      isputloding = false;
      notifyListeners();
      return responseclass;
    }catch(e){
-     log('putapi:catch Error $e');
+     debugPrint('putapi:catch Error $e');
      isputloding = false;
      notifyListeners();
      return responseclass;
